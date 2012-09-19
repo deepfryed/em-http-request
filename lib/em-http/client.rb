@@ -72,7 +72,7 @@ module EventMachine
     end
 
     def continue?
-      @response_header.status == 100 && (@req.method == 'POST' || @req.method == 'PUT')
+      @response_header.chunked_encoding? || (@response_header.status == 100 && (@req.method == 'POST' || @req.method == 'PUT'))
     end
 
     def finished?
@@ -133,7 +133,7 @@ module EventMachine
 
     def build_request
       head    = @req.headers ? munge_header_keys(@req.headers) : {}
-      
+
       if @conn.connopts.http_proxy?
         proxy = @conn.connopts.proxy
         head['proxy-authorization'] = proxy[:authorization] if proxy[:authorization]
